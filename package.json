@@ -1,0 +1,36 @@
+{
+  "name": "plank-cli",
+  "version": "0.1.0",
+  "description": "Sync local plan docs to Notion with versioning — CLI + MCP server",
+  "type": "module",
+  "bin": {
+    "plank": "dist/cli/index.js"
+  },
+  "main": "dist/cli/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/cli/index.js",
+    "serve": "node dist/cli/index.js serve",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.3.0",
+    "@modelcontextprotocol/sdk": "^1.10.0",
+    "@notionhq/client": "^5.17.0",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "diff": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/diff": "^7.0.2",
+    "@types/node": "^20.17.0",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
