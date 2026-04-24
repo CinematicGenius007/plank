@@ -50,7 +50,14 @@ jobs:
       - name: Verify package contents
         run: npm pack --dry-run
 
-      - name: Publish package
+      - name: Publish prerelease package
+        if: contains(github.ref_name, '-')
+        run: npm publish --access public --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish stable package
+        if: ${{ !contains(github.ref_name, '-') }}
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
