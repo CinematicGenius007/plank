@@ -1,0 +1,75 @@
+<svg width="680" height="180" viewBox="0 0 680 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="cellGlow">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="textGlow">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background: near-black with very subtle blue tint -->
+  <rect width="680" height="180" rx="20" fill="#0C0E18"/>
+
+  <!-- Subtle grid lines (UV coordinate feel) -->
+  <line x1="20" y1="0" x2="20" y2="180" stroke="#FFFFFF" stroke-width="0.4" opacity="0.04"/>
+  <line x1="160" y1="0" x2="160" y2="180" stroke="#FFFFFF" stroke-width="0.4" opacity="0.04"/>
+  <line x1="0" y1="20" x2="680" y2="20" stroke="#FFFFFF" stroke-width="0.4" opacity="0.04"/>
+  <line x1="0" y1="160" x2="680" y2="160" stroke="#FFFFFF" stroke-width="0.4" opacity="0.04"/>
+
+  <!-- ── ICON: 5×6 pixel grid, 20px cells, 4px gap ── -->
+  <!-- Grid origin at (28, 22), cell=20px, gap=4px, stride=24px -->
+  <!-- Pattern encodes stacked plank/version bars:
+       row0: _ _ _ _ _   (empty)
+       row1: ■ ■ ■ ■ _   (v1 — dim)
+       row2: ■ ■ ■ ■ ■   (v2 — medium)
+       row3: ■ ■ ■ ■ ■   (v3 — bright, latest)
+       row4: ■ _ _ _ _   (accent dot — cursor)
+       row5: _ _ _ _ _   (empty)
+  -->
+
+  <!-- row 1 — v1, very dim -->
+  <rect x="28"  y="46" width="20" height="20" rx="4" fill="#FF6B35" opacity="0.18" filter="url(#cellGlow)"/>
+  <rect x="52"  y="46" width="20" height="20" rx="4" fill="#FF6B35" opacity="0.18" filter="url(#cellGlow)"/>
+  <rect x="76"  y="46" width="20" height="20" rx="4" fill="#FF6B35" opacity="0.18" filter="url(#cellGlow)"/>
+  <rect x="100" y="46" width="20" height="20" rx="4" fill="#FF6B35" opacity="0.18" filter="url(#cellGlow)"/>
+
+  <!-- row 2 — v2, medium -->
+  <rect x="28"  y="70" width="20" height="20" rx="4" fill="#FF6B35" opacity="0.42" filter="url(#cellGlow)"/>
+  <rect x="52"  y="70" width="20" height="20" rx="4" fill="#FF6B35" opacity="0.42" filter="url(#cellGlow)"/>
+  <rect x="76"  y="70" width="20" height="20" rx="4" fill="#FF6B35" opacity="0.42" filter="url(#cellGlow)"/>
+  <rect x="100" y="70" width="20" height="20" rx="4" fill="#FF6B35" opacity="0.42" filter="url(#cellGlow)"/>
+  <rect x="124" y="70" width="20" height="20" rx="4" fill="#FF6B35" opacity="0.42" filter="url(#cellGlow)"/>
+
+  <!-- row 3 — v3 latest, full bright -->
+  <rect x="28"  y="94" width="20" height="20" rx="4" fill="#FF6B35" filter="url(#cellGlow)"/>
+  <rect x="52"  y="94" width="20" height="20" rx="4" fill="#FF6B35" filter="url(#cellGlow)"/>
+  <rect x="76"  y="94" width="20" height="20" rx="4" fill="#FF6B35" filter="url(#cellGlow)"/>
+  <rect x="100" y="94" width="20" height="20" rx="4" fill="#FF6B35" filter="url(#cellGlow)"/>
+  <rect x="124" y="94" width="20" height="20" rx="4" fill="#FF6B35" filter="url(#cellGlow)"/>
+
+  <!-- Cursor blink cell (single lit cell below, left) -->
+  <rect x="28" y="118" width="20" height="20" rx="4" fill="#FF6B35" opacity="0.9" filter="url(#cellGlow)"/>
+
+  <!-- ── DIVIDER ── -->
+  <line x1="176" y1="30" x2="176" y2="150" stroke="#FF6B35" stroke-width="1" opacity="0.15"/>
+
+  <!-- ── WORDMARK ── -->
+  <text
+    x="200"
+    y="115"
+    fill="#F0F0F8"
+    font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+    font-size="76"
+    font-weight="700"
+    letter-spacing="-3"
+    filter="url(#textGlow)"
+  >plank</text>
+
+  <!-- ── TAGLINE ── -->
+  <!-- Terminal prompt prefix -->
+  <text x="202" y="148" fill="#FF6B35" font-family="ui-monospace, monospace" font-size="13" font-weight="500" opacity="0.7">$</text>
+  <text x="216" y="148" fill="#3E4255" font-family="ui-monospace, monospace" font-size="13" font-weight="400" letter-spacing="0.3">cli · mcp · plan sync</text>
+</svg>

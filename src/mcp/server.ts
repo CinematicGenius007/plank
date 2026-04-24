@@ -10,6 +10,7 @@ import { getLatestRow, getHistory, listProjects, getLatestChecksum } from "../no
 import { pushDoc } from "../notion/push.js";
 import { unifiedDiff } from "../utils/diff.js";
 import type { GlobalConfig } from "../config/types.js";
+import { VERSION } from "../version.js";
 
 const TOOLS = [
   {
@@ -93,7 +94,7 @@ function fail(message: string): { content: Array<{ type: "text"; text: string }>
 
 export async function startMcpServer(): Promise<void> {
   const server = new Server(
-    { name: "plank", version: "0.1.0" },
+    { name: "plank", version: VERSION },
     { capabilities: { tools: {} } }
   );
 

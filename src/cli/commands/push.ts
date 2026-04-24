@@ -8,6 +8,7 @@ import { pushDoc } from "../../notion/push.js";
 import { promptAndTrack } from "./track.js";
 import { docLabel, versionStr, pushed, skipped, error, header, blank, warn } from "../../utils/output.js";
 import chalk from "chalk";
+import { ensurePlankDataSourceSchema } from "../notion-setup.js";
 
 export function makePushCommand(): Command {
   return new Command("push")
@@ -34,6 +35,10 @@ export function makePushCommand(): Command {
           return;
         }
         targets = rc.docs.map((d) => d.file);
+      }
+
+      if (!(await ensurePlankDataSourceSchema(client, databaseId))) {
+        return;
       }
 
       header(`Pushing to Notion  ${chalk.dim(`[${rc.project}]`)}`);

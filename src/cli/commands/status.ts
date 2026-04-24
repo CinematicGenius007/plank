@@ -8,6 +8,7 @@ import { getLatestChecksum } from "../../notion/query.js";
 import { sha256 } from "../../utils/checksum.js";
 import { docLabel, versionStr, header, blank, warn } from "../../utils/output.js";
 import chalk from "chalk";
+import { ensurePlankDataSourceSchema } from "../notion-setup.js";
 
 export function makeStatusCommand(): Command {
   return new Command("status")
@@ -20,6 +21,10 @@ export function makeStatusCommand(): Command {
 
       if (rc.docs.length === 0) {
         warn("No docs tracked in .planrc.");
+        return;
+      }
+
+      if (!(await ensurePlankDataSourceSchema(client, databaseId))) {
         return;
       }
 

@@ -1,5 +1,5 @@
 import type { Client } from "@notionhq/client";
-import { chunkContent, getTitlePropertyName } from "./client.js";
+import { assertDataSourceProperties, chunkContent, getTitlePropertyName } from "./client.js";
 import { getNextVersion, getLatestRow } from "./query.js";
 import { sha256, isUnchanged } from "../utils/checksum.js";
 import type { GlobalConfig, NotionRow } from "../config/types.js";
@@ -27,6 +27,14 @@ export async function pushDoc(
   const { project, file, title, content, databaseId, message } = opts;
   const checksum = sha256(content);
 
+  await assertDataSourceProperties(client, databaseId, [
+    "project",
+    "file",
+    "version",
+    "pushed_at",
+    "checksum",
+  ]);
+
   // Check if content has changed since last push
   const latest = await getLatestRow(client, databaseId, project, file);
   if (latest && isUnchanged(content, latest.checksum)) {
@@ -39,7 +47,7 @@ export async function pushDoc(
 
   // Create the page with metadata properties
   const page = await client.pages.create({
-    parent: { database_id: databaseId },
+    parent: { data_source_id: databaseId },
     properties: {
       [titlePropName]: {
         title: [{ text: { content: title } }],

@@ -1,5 +1,7 @@
 node_modules/
 dist/
+# Don't forget to ignore the .planrc file, which contains sensitive information
+.planrc
 *.js.map
 *.d.ts.map
 .DS_Store

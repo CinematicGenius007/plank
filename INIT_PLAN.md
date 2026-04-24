@@ -122,6 +122,8 @@ you to run `plank config` first rather than failing silently.
 no local record of which docs belong to a project. `plank clone` solves
 this:
 
+Add `.planrc` to `.gitignore` in every project that uses Plank.
+
 ```
 plank clone archon
 ```

@@ -8,6 +8,7 @@ import { docLabel, versionStr, written, skipped, header, blank, warn, error } fr
 import type { PlanRC } from "../../config/types.js";
 import { confirm, input } from "@inquirer/prompts";
 import chalk from "chalk";
+import { ensurePlankDataSourceSchema } from "../notion-setup.js";
 
 export function makeCloneCommand(): Command {
   return new Command("clone")
@@ -35,6 +36,10 @@ export function makeCloneCommand(): Command {
 
       header(`Cloning project "${project}" from Notion`);
       blank();
+
+      if (!(await ensurePlankDataSourceSchema(client, databaseId))) {
+        return;
+      }
 
       const docs = await getProjectDocs(client, databaseId, project);
 

@@ -56,7 +56,7 @@ src/
 
 ## Key Data Shapes
 
-### `.planrc` (project root, committed to git)
+### `.planrc` (project root, local file, should be gitignored)
 ```json
 {
   "project": "archon",

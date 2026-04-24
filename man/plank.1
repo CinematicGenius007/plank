@@ -1,0 +1,155 @@
+.TH PLANK 1 "April 2026" "plank 0.1.0" "User Commands"
+.SH NAME
+plank \- sync local plan documents to Notion with versioned history
+.SH SYNOPSIS
+.B plank
+[\fIglobal-options\fR] \fIcommand\fR [\fIcommand-options\fR] [\fIarguments\fR]
+.SH DESCRIPTION
+.B plank
+is a CLI and MCP companion for keeping project plan documents in sync with a
+Notion database. Each push creates a new version row instead of mutating
+history in place.
+.PP
+Plank keeps project-specific tracking in
+.I .planrc
+at the project root and machine-specific secrets in
+.I ~/.plank/config.json\fR.
+.PP
+Tracked document content is stored in the Notion page body as chunked Markdown
+code blocks. Metadata such as project, file, version, checksum, and message is
+stored in database properties.
+.SH COMMANDS
+.TP
+.B plank config
+Run interactive global setup for
+.I ~/.plank/config.json\fR.
+Prompts for the Notion API token and default database ID.
+.TP
+.B plank config set \fIkey value\fR
+Set one global configuration key non-interactively.
+Valid keys are
+.BR notion_token " and " default_database_id .
+.TP
+.B plank config show
+Print the current global configuration with the token masked.
+.TP
+.B plank init
+Create a new
+.I .planrc
+in the current directory.
+Prompts for the project code name, optional description, and optional database
+override.
+.TP
+.B plank clone \fIproject\fR
+Bootstrap the current directory from Notion by reconstructing
+.I .planrc
+and pulling the latest version of every tracked file for the given project.
+.TP
+.B plank track \fIfile\fR
+Add a file to
+.I .planrc
+tracking and prompt for its display title.
+This command does not push content.
+.TP
+.B plank push [\fIfile\fR]
+Push all tracked files, or only the named file, to Notion.
+If a single file is not already tracked, Plank prompts for a title and adds it
+to
+.I .planrc
+before continuing.
+.TP
+.B plank pull [\fIfile\fR]
+Pull the latest version of all tracked files, or only the named file, from
+Notion to disk.
+.TP
+.B plank status
+Compare local tracked files with the latest remote checksum and report whether
+each file is up to date, local-only, remote-only, or modified.
+.TP
+.B plank log [\fIfile\fR]
+Show version history for all tracked files, or one specific tracked file.
+.TP
+.B plank serve
+Start the MCP server over standard I/O for editor or agent integrations.
+.SH OPTIONS
+.TP
+.B -V, --version
+Print the installed Plank version.
+.TP
+.B -h, --help
+Show help for the main command or a subcommand.
+.SH COMMAND OPTIONS
+.TP
+.B plank clone --db \fIdatabase_id\fR
+Override the global default Notion database ID for the clone operation.
+.TP
+.B plank push -m, --message \fImsg\fR
+Attach an optional message to the new pushed version.
+.TP
+.B plank log -n, --limit \fIn\fR
+Limit the number of versions shown per file.
+Defaults to 10.
+.SH FILES
+.TP
+.I .planrc
+Project configuration committed with the repository or project root.
+.TP
+.I ~/.plank/config.json
+Machine-level configuration containing the Notion token and default database ID.
+.SH EXAMPLES
+.TP
+Initial setup:
+.RS
+.nf
+plank config
+plank init
+plank track ARCHON.md
+plank push -m "initial import"
+.fi
+.RE
+.TP
+Push a single file and add it to tracking if needed:
+.RS
+.nf
+plank push PLAN.md -m "refresh milestones"
+.fi
+.RE
+.TP
+Bootstrap a new machine inside an existing project folder:
+.RS
+.nf
+plank config
+plank clone archon
+.fi
+.RE
+.TP
+Use the MCP server mode:
+.RS
+.nf
+plank serve
+.fi
+.RE
+.SH EXIT STATUS
+.PP
+Plank exits with status 0 on success.
+Command failures, configuration errors, invalid arguments, and upstream API
+errors cause a non-zero exit status.
+.SH NOTES
+.IP \(bu 2
+Plank identifies documents by
+.B file
+for commands and uses
+.B title
+as the human-readable display label.
+.IP \(bu 2
+Pushes are deduplicated by checksum. Unchanged content is skipped instead of
+creating a new version row.
+.IP \(bu 2
+Every successful push creates a new version row in Notion. Existing rows are
+not edited in place.
+.SH SEE ALSO
+.PP
+Project documentation in
+.I INIT_PLAN.md
+and contributor workflow in
+.I CONTRIBUTING.md\fR.

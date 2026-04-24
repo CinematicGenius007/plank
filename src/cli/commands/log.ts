@@ -5,6 +5,7 @@ import { getClient } from "../../notion/client.js";
 import { getHistory } from "../../notion/query.js";
 import { docLabel, versionStr, header, blank, warn } from "../../utils/output.js";
 import chalk from "chalk";
+import { ensurePlankDataSourceSchema } from "../notion-setup.js";
 
 export function makeLogCommand(): Command {
   return new Command("log")
@@ -27,6 +28,10 @@ export function makeLogCommand(): Command {
 
       if (file && !findDoc(rc, file)) {
         warn(`"${file}" is not tracked in .planrc.`);
+        return;
+      }
+
+      if (!(await ensurePlankDataSourceSchema(client, databaseId))) {
         return;
       }
 

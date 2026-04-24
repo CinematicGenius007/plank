@@ -5,6 +5,7 @@ import { getClient } from "../../notion/client.js";
 import { pullDoc } from "../../notion/pull.js";
 import { docLabel, versionStr, written, skipped, error, header, blank, warn } from "../../utils/output.js";
 import chalk from "chalk";
+import { ensurePlankDataSourceSchema } from "../notion-setup.js";
 
 export function makePullCommand(): Command {
   return new Command("pull")
@@ -27,6 +28,10 @@ export function makePullCommand(): Command {
 
       if (file && !findDoc(rc, file)) {
         warn(`"${file}" is not tracked in .planrc. Add it with \`plank track ${file}\`.`);
+        return;
+      }
+
+      if (!(await ensurePlankDataSourceSchema(client, databaseId))) {
         return;
       }
 

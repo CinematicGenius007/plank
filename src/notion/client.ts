@@ -3,6 +3,16 @@ import type { GlobalConfig } from "../config/types.js";
 
 let _client: Client | null = null;
 let _titlePropCache: Map<string, string> = new Map();
+let _propertyNameCache: Map<string, Set<string>> = new Map();
+
+export const REQUIRED_DATA_SOURCE_PROPERTIES = {
+  project: "select",
+  file: "rich_text",
+  version: "number",
+  pushed_at: "date",
+  message: "rich_text",
+  checksum: "rich_text",
+} as const;
 
 export function getClient(config: GlobalConfig): Client {
   if (!_client) {
@@ -40,6 +50,93 @@ export async function getTitlePropertyName(
     `No title property found in Notion data source ${databaseId}. ` +
       "Ensure the database has a title property."
   );
+}
+
+export async function getDataSourcePropertyNames(
+  client: Client,
+  databaseId: string
+): Promise<Set<string>> {
+  const cached = _propertyNameCache.get(databaseId);
+  if (cached) return cached;
+
+  const ds = await client.dataSources.retrieve({ data_source_id: databaseId });
+  if (!isFullDataSource(ds)) {
+    throw new Error(`Could not retrieve full data source for ${databaseId}.`);
+  }
+
+  const names = new Set(Object.keys(ds.properties));
+  _propertyNameCache.set(databaseId, names);
+  return names;
+}
+
+export async function getMissingDataSourceProperties(
+  client: Client,
+  databaseId: string,
+  required: string[]
+): Promise<string[]> {
+  const existing = await getDataSourcePropertyNames(client, databaseId);
+  return required.filter((name) => !existing.has(name));
+}
+
+export async function assertDataSourceProperties(
+  client: Client,
+  databaseId: string,
+  required: string[]
+): Promise<void> {
+  const missing = await getMissingDataSourceProperties(client, databaseId, required);
+
+  if (missing.length === 0) return;
+
+  throw new Error(
+    [
+      `Notion data source schema is missing required properties: ${missing.join(", ")}`,
+      "Plank expects these properties:",
+      '  - one title property (name can vary, e.g. "Name")',
+      '  - "project" (select)',
+      '  - "file" (rich text)',
+      '  - "version" (number)',
+      '  - "pushed_at" (date)',
+      '  - "message" (rich text, optional but recommended)',
+      '  - "checksum" (rich text)',
+    ].join("\n")
+  );
+}
+
+export async function createMissingDataSourceProperties(
+  client: Client,
+  databaseId: string,
+  missing: string[]
+): Promise<string[]> {
+  const supported = missing.filter((name) => name in REQUIRED_DATA_SOURCE_PROPERTIES);
+  if (supported.length === 0) return [];
+
+  const properties: Record<string, object> = {};
+  for (const name of supported) {
+    const type = REQUIRED_DATA_SOURCE_PROPERTIES[name as keyof typeof REQUIRED_DATA_SOURCE_PROPERTIES];
+
+    switch (type) {
+      case "select":
+        properties[name] = { select: {} };
+        break;
+      case "rich_text":
+        properties[name] = { rich_text: {} };
+        break;
+      case "number":
+        properties[name] = { number: {} };
+        break;
+      case "date":
+        properties[name] = { date: {} };
+        break;
+    }
+  }
+
+  await client.dataSources.update({
+    data_source_id: databaseId,
+    properties: properties as Parameters<Client["dataSources"]["update"]>[0]["properties"],
+  });
+
+  _propertyNameCache.delete(databaseId);
+  return supported;
 }
 
 /**

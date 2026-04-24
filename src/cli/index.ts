@@ -8,11 +8,12 @@ import { makePushCommand } from "./commands/push.js";
 import { makePullCommand } from "./commands/pull.js";
 import { makeStatusCommand } from "./commands/status.js";
 import { makeLogCommand } from "./commands/log.js";
+import { VERSION } from "../version.js";
 
 program
   .name("plank")
   .description("Sync local plan docs to Notion with versioning — CLI + MCP server")
-  .version("0.1.0");
+  .version(VERSION);
 
 program.addCommand(makeConfigCommand());
 program.addCommand(makeInitCommand());
@@ -31,5 +32,9 @@ program
     const { startMcpServer } = await import("../mcp/server.js");
     await startMcpServer();
   });
+
+if (process.argv.length <= 2) {
+  program.help({ error: false });
+}
 
 program.parse();

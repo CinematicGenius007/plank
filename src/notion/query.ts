@@ -1,6 +1,7 @@
 import { isFullPage } from "@notionhq/client";
 import type { Client, PageObjectResponse } from "@notionhq/client";
 import type { NotionRow } from "../config/types.js";
+import { assertDataSourceProperties } from "./client.js";
 
 // ── Property extractors ───────────────────────────────────────────────────────
 
@@ -78,6 +79,7 @@ async function queryDataSource(
   client: Client,
   params: DataSourceQueryParams
 ): Promise<PageObjectResponse[]> {
+  await assertDataSourceProperties(client, params.data_source_id, ["project", "file", "version"]);
   const response = await client.dataSources.query(params);
   return response.results.filter(isFullPage) as PageObjectResponse[];
 }
