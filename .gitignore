@@ -1,5 +1,6 @@
 node_modules/
 dist/
+*.tgz
 # Don't forget to ignore the .planrc file, which contains sensitive information
 .planrc
 *.js.map
